@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>inteQ Pricing Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B2440;--navy-deep:#081B31;--gold:#C9A24A;--gold-soft:#E3C98A;
+    --paper:#FAF7F0;--slate:#5C6B7E;--slate-light:#8A98A8;--hair:#E7E0D2;--teal:#2F7D6B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--navy);
+    -webkit-font-smoothing:antialiased;padding:24px;display:flex;justify-content:center;}
+  .wrap{width:100%;max-width:860px;background:#fff;border-radius:18px;overflow:hidden;
+    box-shadow:0 18px 50px rgba(11,36,64,.12);border:1px solid var(--hair);}
+  .head{background:var(--navy);color:#fff;padding:26px 32px 24px;position:relative;}
+  .head::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;
+    background:linear-gradient(90deg,var(--gold),var(--gold-soft) 40%,transparent 72%);}
+  .eyebrow{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;
+    letter-spacing:.26em;font-weight:600;font-size:13px;color:var(--gold);}
+  .head h1{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px;margin-top:6px;letter-spacing:.005em;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;}
+  .controls{padding:28px 32px;border-right:1px solid var(--hair);}
+  .field{margin-bottom:24px;}
+  .field:last-child{margin-bottom:0;}
+  label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--slate);display:flex;justify-content:space-between;align-items:baseline;}
+  label .v{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--navy);letter-spacing:.01em;}
+  input[type=number]{width:100%;margin-top:8px;padding:11px 13px;border:1px solid var(--hair);
+    border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;color:var(--navy);
+    background:#fff;outline:none;}
+  input[type=number]:focus{border-color:var(--gold);}
+  input[type=range]{width:100%;margin-top:12px;-webkit-appearance:none;appearance:none;height:5px;border-radius:5px;background:var(--hair);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--navy);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--navy);cursor:pointer;border:3px solid #fff;}
+  .toggles{display:flex;gap:10px;margin-top:8px;}
+  .tog{flex:1;border:1px solid var(--hair);border-radius:9px;padding:11px 10px;cursor:pointer;text-align:center;font-size:13px;font-weight:600;color:var(--slate);user-select:none;transition:.15s;}
+  .tog .dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:middle;opacity:.3;}
+  .tog.eps .dot{background:var(--navy);}
+  .tog.paw .dot{background:var(--gold);}
+  .tog.on{background:#F4EFE3;border-color:var(--gold);color:var(--navy);}
+  .tog.on .dot{opacity:1;}
+  /* results */
+  .out{padding:28px 32px;background:#fff;display:flex;flex-direction:column;}
+  .res-line{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--hair);}
+  .res-line .n{font-size:13px;font-weight:500;color:var(--navy);}
+  .res-line .n small{display:block;font-size:11px;color:var(--slate-light);}
+  .res-line .a{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:21px;font-variant-numeric:tabular-nums;}
+  .d{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:8px;}
+  .d.eps{background:var(--navy);} .d.paw{background:var(--gold);}
+  .bar{height:9px;border-radius:5px;overflow:hidden;display:flex;margin:18px 0 6px;background:var(--hair);}
+  .bar .e{background:var(--navy);transition:.2s;} .bar .p{background:var(--gold);transition:.2s;}
+  .total{margin-top:18px;background:var(--navy);color:#fff;border-radius:12px;padding:18px 20px;}
+  .total .lab{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-soft);font-weight:600;}
+  .total .big{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;line-height:.95;font-variant-numeric:tabular-nums;}
+  .total .big span{font-size:16px;font-weight:500;color:#aab8c6;}
+  .total .row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:10px;}
+  .total .ann{text-align:right;}
+  .total .ann .l{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#aab8c6;font-weight:600;}
+  .total .ann .v{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:24px;color:var(--gold);font-variant-numeric:tabular-nums;}
+  .blend{margin-top:12px;display:flex;justify-content:space-between;font-size:12.5px;color:var(--slate);font-weight:600;align-items:center;}
+  .blend b{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--navy);}
+  .free{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:#fff;background:var(--teal);padding:4px 12px;border-radius:999px;}
+  @media (max-width:720px){.grid{grid-template-columns:1fr;}.controls{border-right:none;border-bottom:1px solid var(--hair);}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">inteQ Resident Benefits</div>
+      <h1>Build your pricing</h1>
+    </div>
+    <div class="grid">
+      <div class="controls">
+        <div class="field">
+          <label>Portfolio size <span class="v" id="dV">2,500</span></label>
+          <input type="number" id="doors" value="2500" min="1" step="50">
+        </div>
+        <div class="field">
+          <label>Occupancy <span class="v" id="oV">94%</span></label>
+          <input type="range" id="occ" min="70" max="100" value="94">
+        </div>
+        <div class="field">
+          <label>Pet ownership <span class="v" id="pV">40%</span></label>
+          <input type="range" id="pet" min="0" max="100" value="40">
+        </div>
+        <div class="field">
+          <label>Programs</label>
+          <div class="toggles">
+            <div class="tog eps on" id="tEps"><span class="dot"></span>EPS</div>
+            <div class="tog paw on" id="tPaw"><span class="dot"></span>Paw Connect</div>
+          </div>
+        </div>
+      </div>
+      <div class="out">
+        <div class="res-line" id="rEps">
+          <div class="n"><span class="d eps"></span>EPS for Renters<small id="epsSub">2,350 doors × $5</small></div>
+          <div class="a" id="epsA">$11,750</div>
+        </div>
+        <div class="res-line" id="rPaw">
+          <div class="n"><span class="d paw"></span>Paw Connect<small id="pawSub">940 pet doors × $5</small></div>
+          <div class="a" id="pawA">$4,700</div>
+        </div>
+        <div class="bar"><div class="e" id="barE" style="width:71%"></div><div class="p" id="barP" style="width:29%"></div></div>
+        <div class="total">
+          <div class="lab">Total monthly</div>
+          <div class="row">
+            <div class="big" id="totM">$16,450<span>/mo</span></div>
+            <div class="ann"><div class="l">Annual</div><div class="v" id="totA">$197,400</div></div>
+          </div>
+        </div>
+        <div class="blend"><span>Blended <b id="bl">$7.00</b> / occupied door</span><span class="free">$0 to residents</span></div>
+      </div>
+    </div>
+  </div>
+<script>
+  const EPS_RATE=5, PAW_RATE=5;
+  const $=id=>document.getElementById(id);
+  const fmt=n=>'$'+Math.round(n).toLocaleString('en-US');
+  let epsOn=true, pawOn=true;
+
+  function calc(){
+    const doors=Math.max(0,parseInt($('doors').value)||0);
+    const occ=parseInt($('occ').value)/100;
+    const pet=parseInt($('pet').value)/100;
+    const occupied=Math.round(doors*occ);
+    const petDoors=Math.round(occupied*pet);
+
+    $('dV').textContent=doors.toLocaleString('en-US');
+    $('oV').textContent=Math.round(occ*100)+'%';
+    $('pV').textContent=Math.round(pet*100)+'%';
+
+    const epsM=epsOn?occupied*EPS_RATE:0;
+    const pawM=pawOn?petDoors*PAW_RATE:0;
+    const totM=epsM+pawM;
+
+    $('rEps').style.opacity=epsOn?1:.32;
+    $('rPaw').style.opacity=pawOn?1:.32;
+    $('epsA').textContent=fmt(epsM);
+    $('pawA').textContent=fmt(pawM);
+    $('epsSub').textContent=occupied.toLocaleString('en-US')+' doors × $5';
+    $('pawSub').textContent=petDoors.toLocaleString('en-US')+' pet doors × $5';
+
+    $('totM').innerHTML=fmt(totM)+'<span>/mo</span>';
+    $('totA').textContent=fmt(totM*12);
+    const blended=occupied>0?totM/occupied:0;
+    $('bl').textContent='$'+blended.toFixed(2);
+
+    const eW=totM>0?(epsM/totM*100):0;
+    $('barE').style.width=eW+'%';
+    $('barP').style.width=(100-eW)+'%';
+  }
+  ['doors','occ','pet'].forEach(id=>$(id).addEventListener('input',calc));
+  $('tEps').addEventListener('click',()=>{epsOn=!epsOn;$('tEps').classList.toggle('on',epsOn);calc();});
+  $('tPaw').addEventListener('click',()=>{pawOn=!pawOn;$('tPaw').classList.toggle('on',pawOn);calc();});
+  calc();
+</script>
+</body>
+</html>
