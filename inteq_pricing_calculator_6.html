@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inteQ — Calculate Your NOI Boost</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:      #0B2440;
+    --navy-mid:  #122d50;
+    --blue:      #3F7BEA;
+    --blue-light:#5A90F0;
+    --green:     #4BA8C8;
+    --green-dim: #3A90AE;
+    --red:       #C0605A;
+    --surface:   #F7F5F0;
+    --border:    #E2DDD6;
+    --text:      #1A2B3C;
+    --muted:     #7A8A96;
+    --white:     #FDFAF6;
+    --radius:    6px;
+    --shadow:    0 2px 12px rgba(11,36,64,0.10);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 22px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .header-left p {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  .logos {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .logo-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: var(--radius);
+    padding: 5px 11px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  /* ── HERO RESULT STRIP ── */
+  .hero-strip {
+    background: var(--navy-mid);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 28px 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: linear-gradient(135deg, #0D2B50 0%, #0B2440 100%);
+  }
+
+  .hero-metric {
+    padding: 0 28px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .hero-metric:first-child { padding-left: 0; text-align: left; }
+  .hero-metric:last-child  { border-right: none; text-align: right; }
+
+  .hero-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 6px;
+  }
+
+  .hero-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--white);
+    transition: color 0.3s;
+  }
+  .hero-value.positive { color: #7DD4F0; }
+  .hero-value.negative { color: #F0907A; }
+
+  .hero-sub {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 160px);
+  }
+
+  /* ── INPUTS PANEL ── */
+  .inputs-panel {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    padding: 28px 24px;
+    overflow-y: auto;
+  }
+
+  .panel-section {
+    margin-bottom: 28px;
+  }
+  .panel-section:last-child { margin-bottom: 0; }
+
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .input-row {
+    margin-bottom: 18px;
+  }
+  .input-row:last-child { margin-bottom: 0; }
+
+  .input-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .input-label span:first-child {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .input-label .val-display {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2px solid var(--white);
+    box-shadow: 0 1px 4px rgba(63,123,234,0.4);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--blue-light);
+  }
+  input[type="range"].retention-slider {
+    background: linear-gradient(to right, #C0605A 0%, #C9906A 30%, var(--border) 40%, var(--border) 60%, #4BA8C8 100%);
+  }
+
+  .range-endpoints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* ── RESULTS PANEL ── */
+  .results-panel {
+    background: var(--surface);
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+
+  .results-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── SAVINGS CARDS ── */
+  .savings-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .savings-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .savings-card .card-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .savings-card .card-value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+  }
+  .savings-card .card-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .savings-card.highlight {
+    border-color: #4BA8C8;
+    background: linear-gradient(135deg, #EEF6FA 0%, #FDFAF6 100%);
+  }
+  .savings-card.highlight .card-value { color: #3A90AE; }
+
+  /* ── NET BENEFIT BAR ── */
+  .net-benefit-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .net-benefit-block .nb-left .nb-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .net-benefit-block .nb-left .nb-value {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    transition: color 0.3s;
+  }
+  .nb-value.positive { color: var(--green-dim); }
+  .nb-value.negative { color: var(--red); }
+
+  .nb-value.neutral { color: var(--navy); }
+
+  .net-benefit-block .nb-right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .nb-right .nb-context {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .nb-right .nb-context strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── BREAKEVEN ── */
+  .breakeven-block {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+  .be-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .be-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-top: 2px;
+  }
+  .be-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* ── PROGRAM COST FOOTNOTE ── */
+  .program-cost-row {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .pc-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .pc-breakdown {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .pc-total {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    text-align: right;
+  }
+  .pc-total-sub {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 2px;
+    text-align: right;
+  }
+
+  /* ── SCENARIO TAG ── */
+  .scenario-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    letter-spacing: 0.04em;
+  }
+  .tag-upside  { background: #D6EEF7; color: #1E6A85; }
+  .tag-at-risk { background: #FAE4E1; color: #8B3A35; }
+  .tag-neutral { background: #EAE8E3; color: #4A5568; }
+
+  /* ── SOFT VALUE BLOCK ── */
+  .soft-value-block {
+    background: #EEF6FA;
+    border: 1px solid #C8DFE9;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .sv-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #3A90AE;
+    margin-bottom: 12px;
+  }
+  .sv-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sv-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 0.78rem;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .sv-icon {
+    color: #4BA8C8;
+    font-size: 0.65rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 780px) {
+    header { padding: 16px 20px; flex-wrap: wrap; }
+    .hero-strip { grid-template-columns: 1fr; gap: 14px; padding: 20px; }
+    .hero-metric { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 0 14px; text-align: left !important; }
+    .hero-metric:last-child { border-bottom: none; padding-bottom: 0; }
+    .main { grid-template-columns: 1fr; }
+    .inputs-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    .savings-cards { grid-template-columns: 1fr; }
+    .net-benefit-block { flex-direction: column; align-items: flex-start; }
+    .nb-right { text-align: left; }
+    .breakeven-block { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .be-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <h1>Calculate Your NOI Boost</h1>
+    <p>Adjust your portfolio assumptions, and see the impact instantly</p>
+  </div>
+</header>
+
+<!-- HERO STRIP -->
+<div class="hero-strip">
+  <div class="hero-metric">
+    <div class="hero-label">Annual Savings</div>
+    <div class="hero-value positive" id="h-savings">$0</div>
+    <div class="hero-sub">turnover cost + lost rent avoided</div>
+  </div>
+  <div class="hero-metric">
+    <div class="hero-label">Turns Avoided / Year</div>
+    <div class="hero-value" id="h-turns">0</div>
+    <div class="hero-sub">at your retention improvement</div>
+  </div>
+  <div class="hero-metric">
+    <div class="hero-label">Net Annual Benefit</div>
+    <div class="hero-value" id="h-net">$0</div>
+    <div class="hero-sub">savings minus program cost</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- INPUTS -->
+  <div class="inputs-panel">
+
+    <div class="panel-section">
+      <div class="section-label">Portfolio</div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Total Doors</span>
+          <span class="val-display" id="disp-doors">2,500</span>
+        </div>
+        <input type="range" id="sl-doors" min="100" max="20000" step="100" value="2500" />
+        <div class="range-endpoints"><span>100</span><span>20,000</span></div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Physical Occupancy</span>
+          <span class="val-display" id="disp-occ">94%</span>
+        </div>
+        <input type="range" id="sl-occ" min="70" max="99" step="1" value="94" />
+        <div class="range-endpoints"><span>70%</span><span>99%</span></div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Pet Occupancy (of occupied)</span>
+          <span class="val-display" id="disp-pet">40%</span>
+        </div>
+        <input type="range" id="sl-pet" min="5" max="80" step="5" value="40" />
+        <div class="range-endpoints"><span>5%</span><span>80%</span></div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="section-label">Rent & Retention</div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Median Monthly Rent</span>
+          <span class="val-display" id="disp-rent">$1,800</span>
+        </div>
+        <input type="range" id="sl-rent" min="800" max="4000" step="50" value="1800" />
+        <div class="range-endpoints"><span>$800</span><span>$4,000</span></div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Current Retention Rate</span>
+          <span class="val-display" id="disp-retention">54%</span>
+        </div>
+        <input type="range" id="sl-retention" min="30" max="85" step="1" value="54" />
+        <div class="range-endpoints"><span>30%</span><span>85%</span></div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Retention Change with inteQ</span>
+          <span class="val-display" id="disp-boost">+3%</span>
+        </div>
+        <input type="range" class="retention-slider" id="sl-boost" min="-3" max="10" step="0.5" value="3" />
+        <div class="range-endpoints"><span style="color:#C0605A;">−3%</span><span style="color:#4BA8C8;">+10%</span></div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="section-label">Turnover Cost</div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Cost per Turn</span>
+          <span class="val-display" id="disp-turn">$3,000</span>
+        </div>
+        <input type="range" id="sl-turn" min="500" max="8000" step="250" value="3000" />
+        <div class="range-endpoints"><span>$500</span><span>$8,000</span></div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">
+          <span>Avg Days Vacant per Turn</span>
+          <span class="val-display" id="disp-days">46 days</span>
+        </div>
+        <input type="range" id="sl-days" min="14" max="120" step="1" value="46" />
+        <div class="range-endpoints"><span>14 days</span><span>120 days</span></div>
+      </div>
+    </div>
+
+  </div><!-- /inputs-panel -->
+
+  <!-- RESULTS -->
+  <div class="results-panel">
+    <div class="results-title">Value Breakdown</div>
+
+    <div class="savings-cards">
+      <div class="savings-card highlight">
+        <div class="card-label">Turnover Cost Avoided</div>
+        <div class="card-value" id="r-turn-saved">$0</div>
+        <div class="card-sub" id="r-turn-sub">0 turns × $3,000</div>
+      </div>
+      <div class="savings-card highlight">
+        <div class="card-label">Lost Rent Avoided</div>
+        <div class="card-value" id="r-rent-saved">$0</div>
+        <div class="card-sub" id="r-rent-sub">0 turns × 46 days</div>
+      </div>
+    </div>
+
+    <div class="net-benefit-block">
+      <div class="nb-left">
+        <div class="nb-label">Net Annual Benefit</div>
+        <div class="nb-value positive" id="r-net">$0</div>
+      </div>
+      <div class="nb-right">
+        <div class="nb-context">
+          <strong id="r-turns-label">0 fewer move-outs / yr</strong><br/>
+          <span id="r-roi-label">— ROI</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="breakeven-block">
+      <div>
+        <div class="be-label">Break-Even Retention Lift</div>
+        <div class="be-value" id="r-breakeven">—</div>
+      </div>
+      <div class="be-divider"></div>
+      <div>
+        <div class="be-label">Turns to Break Even</div>
+        <div class="be-value" id="r-be-turns">—</div>
+      </div>
+      <div class="be-divider"></div>
+      <div>
+        <div class="be-label">Occupied Doors</div>
+        <div class="be-value" id="r-occ-doors">—</div>
+      </div>
+    </div>
+
+    <div class="soft-value-block">
+      <div class="sv-title">ROX: Return on Experience</div>
+      <div class="sv-items">
+        <div class="sv-item">
+          <span class="sv-icon">★</span>
+          <span>More positive online reviews, happier residents</span>
+        </div>
+        <div class="sv-item">
+          <span class="sv-icon">★</span>
+          <span>Stronger leasing velocity, differentiated amenity stack</span>
+        </div>
+        <div class="sv-item">
+          <span class="sv-icon">★</span>
+          <span>Pet-friendly reputation drives higher pet-occupancy and pet fee revenue</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="program-cost-row">
+      <div>
+        <div class="pc-label">Program Investment</div>
+        <div class="pc-breakdown" id="r-cost-breakdown">EPS: — · Paw Connect: —</div>
+      </div>
+      <div>
+        <div class="pc-total" id="r-cost-annual">—/yr</div>
+        <div class="pc-total-sub" id="r-cost-monthly">— /mo</div>
+      </div>
+    </div>
+
+  </div><!-- /results-panel -->
+</div><!-- /main -->
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  const fmt = (n, decimals = 0) =>
+    n < 0
+      ? '−$' + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: decimals })
+      : '$' + n.toLocaleString('en-US', { maximumFractionDigits: decimals });
+
+  const pct = n => (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+
+  function calc() {
+    const doors     = +$('sl-doors').value;
+    const occ       = +$('sl-occ').value / 100;
+    const pet       = +$('sl-pet').value / 100;
+    const rent      = +$('sl-rent').value;
+    const retention = +$('sl-retention').value / 100;
+    const boost     = +$('sl-boost').value / 100;  // can be negative
+    const turnCost  = +$('sl-turn').value;
+    const days      = +$('sl-days').value;
+
+    // ── Portfolio math ──
+    const occDoors  = Math.round(doors * occ);
+    const petDoors  = Math.round(occDoors * pet);
+
+    // ── Turnover ──
+    const baselineTurns  = occDoors * (1 - retention);          // annual move-outs at current retention
+    const turnsSaved     = occDoors * boost;                     // can be negative
+    const turnsAvoided   = Math.round(turnsSaved);               // signed
+
+    // ── Savings ──
+    const turnCostSaved  = turnsAvoided * turnCost;
+    const lostRentSaved  = turnsAvoided * rent * (days / 30);
+    const totalSavings   = turnCostSaved + lostRentSaved;
+
+    // ── Program cost ──
+    const epsAnnual  = occDoors * 5 * 12;
+    const pawAnnual  = petDoors * 5 * 12;
+    const progAnnual = epsAnnual + pawAnnual;
+    const progMo     = progAnnual / 12;
+
+    // ── Net ──
+    const net = totalSavings - progAnnual;
+
+    // ── Break-even ──
+    // How many turns needed to cover program cost?
+    const valuePerTurn   = turnCost + rent * (days / 30);
+    const beturns        = progAnnual / valuePerTurn;
+    const bePct          = (beturns / occDoors) * 100;
+
+    // ── ROI ──
+    const roi = progAnnual > 0 ? (net / progAnnual) * 100 : 0;
+
+    // ── Display helpers ──
+    $('disp-doors').textContent     = doors.toLocaleString();
+    $('disp-occ').textContent       = Math.round(occ * 100) + '%';
+    $('disp-pet').textContent       = Math.round(pet * 100) + '%';
+    $('disp-rent').textContent      = '$' + rent.toLocaleString();
+    $('disp-retention').textContent = Math.round(retention * 100) + '%';
+    $('disp-boost').textContent     = pct(+$('sl-boost').value);
+    $('disp-turn').textContent      = '$' + turnCost.toLocaleString();
+    $('disp-days').textContent      = days + ' days';
+
+    // ── Hero strip ──
+    const hSavings = $('h-savings');
+    const hNet     = $('h-net');
+    const hTurns   = $('h-turns');
+
+    hSavings.textContent = fmt(totalSavings);
+    hSavings.className   = 'hero-value ' + (totalSavings >= 0 ? 'positive' : 'negative');
+
+    hTurns.textContent   = (turnsAvoided >= 0 ? '+' : '') + turnsAvoided.toLocaleString();
+    hTurns.className     = 'hero-value ' + (turnsAvoided >= 0 ? 'positive' : 'negative');
+
+    hNet.textContent     = fmt(net);
+    hNet.className       = 'hero-value ' + (net >= 0 ? 'positive' : 'negative');
+
+    // ── Savings cards ──
+    $('r-turn-saved').textContent = fmt(turnCostSaved);
+    $('r-turn-sub').textContent   = turnsAvoided + ' turns × ' + fmt(turnCost);
+    $('r-rent-saved').textContent = fmt(lostRentSaved);
+    $('r-rent-sub').textContent   = turnsAvoided + ' turns × ' + days + ' days';
+
+    // ── Net benefit ──
+    const nbVal  = $('r-net');
+    nbVal.textContent = fmt(net);
+    nbVal.className   = 'nb-value ' + (net > 0 ? 'positive' : net < 0 ? 'negative' : 'neutral');
+
+    $('r-turns-label').textContent = (turnsAvoided >= 0 ? turnsAvoided + ' fewer' : Math.abs(turnsAvoided) + ' additional') + ' move-outs / yr';
+    $('r-roi-label').textContent   = (net >= 0 ? '+' : '') + roi.toFixed(0) + '% ROI on program cost';
+
+
+
+    // ── Break-even block ──
+    $('r-breakeven').textContent = '+' + bePct.toFixed(2) + '% retention';
+    $('r-be-turns').textContent  = Math.ceil(beturns) + ' turns / yr';
+    $('r-occ-doors').textContent = occDoors.toLocaleString() + ' doors';
+
+    // ── Program cost footnote ──
+    $('r-cost-breakdown').textContent =
+      'EPS: ' + fmt(epsAnnual) + ' · Paw Connect: ' + fmt(pawAnnual);
+    $('r-cost-annual').textContent = fmt(progAnnual) + '/yr';
+    $('r-cost-monthly').textContent = fmt(Math.round(progMo)) + ' /mo';
+  }
+
+  // Wire all sliders
+  ['sl-doors','sl-occ','sl-pet','sl-rent','sl-retention','sl-boost','sl-turn','sl-days']
+    .forEach(id => $( id).addEventListener('input', calc));
+
+  calc(); // initial render
+</script>
+</body>
+</html>
