@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculate Your NOI Boost | inteQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky: #4BA8C8;
+    --sky-light: #D6EEF7;
+    --sky-dark: #2E7A96;
+    --cream: #F7F5F0;
+    --cream-2: #FDFAF6;
+    --ink: #1A1A1A;
+    --ink-mid: #4A4A4A;
+    --ink-muted: #8A8A8A;
+    --slate: #2C3E50;
+    --green: #2ECC71;
+    --green-muted: #D5F5E3;
+    --red: #E74C3C;
+    --red-muted: #FADBD8;
+    --border: #E2DDD5;
+    --card: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --radius: 10px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--slate);
+    padding: 16px 32px 14px;
+    border-bottom: 3px solid var(--sky);
+  }
+  .header-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: #FFFFFF;
+    letter-spacing: -0.4px;
+    line-height: 1.1;
+  }
+  .header h1 span {
+    color: var(--sky);
+  }
+  .header p {
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+  }
+
+  /* ── LAYOUT ── */
+  .main {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 16px 28px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  @media (max-width: 760px) {
+    .main { grid-template-columns: 1fr; padding: 14px; gap: 14px; }
+    .header { padding: 14px; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--cream);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .card-body {
+    padding: 14px 16px;
+  }
+
+  /* ── SECTION LABELS (inside consolidated input card) ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 12px 0 12px;
+  }
+
+  /* ── INPUTS ── */
+  .field { margin-bottom: 11px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .field-label span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-mid);
+  }
+  .field-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sky-dark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Number inputs */
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0 10px;
+    height: 34px;
+    transition: border-color 0.15s;
+  }
+  .input-row:focus-within { border-color: var(--sky); box-shadow: 0 0 0 3px var(--sky-light); }
+  .input-prefix {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .input-row input[type="number"] {
+    border: none;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .input-row input[type="number"]::-webkit-outer-spin-button,
+  .input-row input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* Sliders */
+  .slider-wrap {
+    position: relative;
+    padding: 4px 0;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--sky);
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    cursor: grab;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; box-shadow: 0 2px 8px rgba(75,168,200,0.4); }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--sky);
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    cursor: grab;
+  }
+
+  /* Slider marks — flex for evenly-spaced, absolute for custom-positioned */
+  .slider-marks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  .slider-marks span {
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+  /* Retention lift marks — absolutely positioned to match true slider stops */
+  .lift-marks {
+    position: relative;
+    height: 14px;
+    margin-top: 5px;
+  }
+  .lift-marks span {
+    position: absolute;
+    font-size: 10px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .lift-marks span:first-child { transform: translateX(0); }
+  .lift-marks span:last-child  { transform: translateX(-100%); }
+
+  /* Retention slider special zero line */
+  .retention-slider-wrap {
+    position: relative;
+  }
+
+  /* Lift slider — gradient track, white thumb */
+  #inp-lift {
+    height: 8px;
+    border-radius: 8px;
+    background: linear-gradient(to right,
+      #95A5A6 0%,
+      #4BA8C8 38%,
+      #1ABC9C 68%,
+      #2ECC71 100%
+    );
+    outline: none;
+  }
+  #inp-lift::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2.5px solid rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18), 0 0 0 3px rgba(75,168,200,0.2);
+    cursor: grab;
+    transition: box-shadow 0.15s;
+  }
+  #inp-lift::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.22), 0 0 0 5px rgba(75,168,200,0.25);
+  }
+  #inp-lift::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2.5px solid rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    cursor: grab;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 18px 0;
+  }
+
+  /* ── OUTPUT PANEL ── */
+  .output-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .metric {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+  .metric.primary {
+    grid-column: 1 / -1;
+    background: var(--slate);
+    border-color: transparent;
+  }
+  .metric.positive { border-left: 3px solid var(--green); }
+  .metric.negative-state { border-left: 3px solid var(--red); }
+
+  .metric-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 3px;
+  }
+  .metric.primary .metric-label { color: rgba(255,255,255,0.55); }
+
+  .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .metric.primary .metric-value {
+    font-size: 28px;
+    color: #fff;
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.red { color: var(--red); }
+
+  .metric-sub {
+    font-size: 10px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  .metric.primary .metric-sub { color: rgba(255,255,255,0.45); }
+
+  /* Breakdown rows */
+  .breakdown { margin-top: 10px; }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-label { color: var(--ink-mid); }
+  .breakdown-val { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .breakdown-val.green { color: #1a8a47; }
+  .breakdown-val.red { color: var(--red); }
+
+  /* ── DERIVED STATS ── */
+  .derived-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .derived-stat {
+    text-align: center;
+    background: var(--cream-2);
+    border-radius: 7px;
+    padding: 8px 6px;
+    border: 1px solid var(--border);
+  }
+  .derived-stat .ds-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--sky-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  .derived-stat .ds-label {
+    font-size: 9px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* ── ROX BOX ── */
+  .rox-box {
+    grid-column: 1 / -1;
+    background: var(--slate);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    border: none;
+    border-top: 4px solid var(--sky);
+    padding: 32px 36px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .rox-label {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+  .rox-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.58);
+    font-weight: 400;
+    line-height: 1.5;
+    max-width: 560px;
+  }
+  .rox-icon {
+    font-size: 48px;
+    padding-top: 4px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+  }
+  .rox-bullets {
+    list-style: none;
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rox-bullets li {
+    font-size: 14px;
+    color: rgba(255,255,255,0.72);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .rox-bullets li::before {
+    content: '→';
+    color: var(--sky);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* ── PROGRAM COST FOOTNOTE ── */
+  .footnote {
+    grid-column: 1 / -1;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    text-align: center;
+    padding: 4px 0 0;
+    line-height: 1.6;
+  }
+  .footnote strong { color: var(--ink-mid); font-weight: 600; }
+
+  /* ── RESET LINK ── */
+  .reset-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--sky-dark);
+    cursor: pointer;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .reset-link:hover { opacity: 1; }
+
+  /* ── SCENARIO BADGE ── */
+  .scenario-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-bottom: 12px;
+  }
+  .scenario-badge.positive { background: var(--green-muted); color: #1a7a3c; }
+  .scenario-badge.negative-state { background: var(--red-muted); color: #a93226; }
+  .scenario-badge.neutral { background: var(--sky-light); color: var(--sky-dark); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg width="54" height="72" viewBox="0 0 54 72" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <style>
+              @keyframes calcGlow {
+                0%,100% { filter: drop-shadow(0 0 4px rgba(75,168,200,0.25)); }
+                50%      { filter: drop-shadow(0 0 14px rgba(75,168,200,0.65)); }
+              }
+              @keyframes showNums {
+                0%,10%  { opacity:0; }
+                20%,55% { opacity:1; }
+                65%,100%{ opacity:0; }
+              }
+              @keyframes showNOI {
+                0%,60%  { opacity:0; }
+                70%,90% { opacity:1; }
+                100%    { opacity:0; }
+              }
+              @keyframes btnFlash1 { 0%,85%,100%{opacity:.45} 25%{opacity:1; fill:#ffffff;} }
+              @keyframes btnFlash2 { 0%,85%,100%{opacity:.45} 42%{opacity:1; fill:#ffffff;} }
+              @keyframes btnFlash3 { 0%,85%,100%{opacity:.45} 58%{opacity:1; fill:#ffffff;} }
+              .calc-wrap { animation: calcGlow 3.2s ease-in-out infinite; }
+              .txt-nums   { animation: showNums 5s ease-in-out infinite; }
+              .txt-noi    { animation: showNOI  5s ease-in-out infinite; }
+              .b1 { animation: btnFlash1 5s ease-in-out infinite; }
+              .b2 { animation: btnFlash2 5s ease-in-out infinite; }
+              .b3 { animation: btnFlash3 5s ease-in-out infinite; }
+            </style>
+          </defs>
+          <g class="calc-wrap">
+            <!-- Body -->
+            <rect x="1" y="1" width="52" height="70" rx="9" fill="#1E3045" stroke="#4BA8C8" stroke-width="1.5"/>
+            <!-- Inner rim -->
+            <rect x="3" y="3" width="48" height="66" rx="7" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <!-- Display screen -->
+            <rect x="5" y="7" width="44" height="19" rx="4" fill="#0B1A26"/>
+            <rect x="5" y="7" width="44" height="19" rx="4" fill="none" stroke="rgba(75,168,200,0.25)" stroke-width="0.75"/>
+            <!-- Animated display text -->
+            <text class="txt-nums" x="45" y="21" text-anchor="end" font-family="'Courier New',monospace" font-size="10" fill="#4BA8C8" font-weight="bold">4,700</text>
+            <text class="txt-noi"  x="45" y="21" text-anchor="end" font-family="'Courier New',monospace" font-size="10" fill="#2ECC71" font-weight="bold">$NOI ↑</text>
+            <!-- Operator strip -->
+            <rect x="40" y="30" width="10" height="36" rx="2" fill="rgba(75,168,200,0.18)"/>
+            <text x="45" y="42" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#4BA8C8" opacity="0.9">÷</text>
+            <text x="45" y="52" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#4BA8C8" opacity="0.9">×</text>
+            <text x="45" y="62" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#2ECC71" font-weight="bold">＝</text>
+            <!-- Main button grid 3×3 -->
+            <rect class="b1" x="6"  y="30" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".45"/>
+            <rect        x="18" y="30" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".3"/>
+            <rect class="b2" x="6"  y="41" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".45"/>
+            <rect        x="18" y="41" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".3"/>
+            <rect class="b3" x="6"  y="52" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".45"/>
+            <rect        x="18" y="52" width="10" height="8" rx="2" fill="#4BA8C8" opacity=".3"/>
+            <!-- Zero key wide -->
+            <rect x="6" y="63" width="22" height="8" rx="2" fill="#4BA8C8" opacity=".3"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <h1>Calculate Your <span>NOI Boost</span></h1>
+        <p>Adjust for your portfolio, and see the impact instantly.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── LEFT: INPUTS (single consolidated card) ── -->
+  <div>
+    <div class="card">
+      <div class="card-body">
+
+        <div class="section-label">Portfolio Assumptions</div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Total Doors</span>
+            <span class="field-value" id="lbl-doors">2,500</span>
+          </div>
+          <div class="input-row">
+            <input type="number" id="inp-doors" value="2500" min="100" max="50000" step="100">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Physical Occupancy</span>
+            <span class="field-value" id="lbl-occ">94%</span>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="inp-occ" min="70" max="99" step="1" value="94">
+          </div>
+          <div class="slider-marks">
+            <span>70%</span><span>85%</span><span>99%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Median Monthly Rent</span>
+            <span class="field-value" id="lbl-rent">$1,800</span>
+          </div>
+          <div class="input-row">
+            <span class="input-prefix">$</span>
+            <input type="number" id="inp-rent" value="1800" min="800" max="6000" step="50">
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <div class="section-label">Turnover Economics</div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Current Retention Rate</span>
+            <span class="field-value" id="lbl-ret">54%</span>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="inp-ret" min="40" max="80" step="1" value="54">
+          </div>
+          <div class="slider-marks">
+            <span>40%</span><span>60%</span><span>80%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Turnover Cost <span style="font-size:10px; font-weight:400; color:var(--ink-muted);">(vacancy loss + make-ready)</span></span>
+            <span class="field-value" id="lbl-turn">$4,500</span>
+          </div>
+          <div class="input-row">
+            <span class="input-prefix">$</span>
+            <input type="number" id="inp-turn" value="4500" min="500" max="20000" step="100">
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+        <div class="section-label">Retention Lift</div>
+
+        <div class="field">
+          <div class="field-label">
+            <span>Retention Lift</span>
+            <span class="field-value" id="lbl-lift">+3.0 pts</span>
+          </div>
+          <div class="retention-slider-wrap">
+            <input type="range" id="inp-lift" min="-3" max="10" step="0.5" value="3">
+          </div>
+          <div class="lift-marks">
+            <span style="left:0%">−3</span>
+            <span style="left:23.1%">0</span>
+            <span style="left:61.5%">+5</span>
+            <span style="left:100%">+10</span>
+          </div>
+        </div>
+
+        <button class="reset-link" onclick="resetDefaults()">↺ Reset to defaults</button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: OUTPUT ── -->
+  <div>
+    <div class="card">
+      <div class="card-body">
+
+        <div class="output-grid">
+          <div class="metric primary">
+            <div class="metric-label">Annual NOI Boost</div>
+            <div class="metric-value green" id="out-noi">$406,080</div>
+            <div class="metric-sub" id="out-noi-sub">turnover savings + rent recovered</div>
+          </div>
+
+          <div class="metric" id="card-turns">
+            <div class="metric-label">Turns Avoided</div>
+            <div class="metric-value" id="out-turns">70</div>
+            <div class="metric-sub" id="out-turns-sub">move-outs prevented</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-label">Monthly Impact</div>
+            <div class="metric-value" id="out-monthly">$33,840</div>
+            <div class="metric-sub">annualized ÷ 12</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="breakdown-row">
+            <span class="breakdown-label">Turnover cost avoided (vacancy + make-ready)</span>
+            <span class="breakdown-val green" id="out-turn-cost">$315,000</span>
+          </div>
+        </div>
+
+        <div class="derived-stats" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="derived-stat">
+            <div class="ds-val" id="out-occ-doors">2,350</div>
+            <div class="ds-label">Occupied Doors</div>
+          </div>
+          <div class="derived-stat">
+            <div class="ds-val" id="out-pet-doors">940</div>
+            <div class="ds-label">Pet Doors (est.)</div>
+          </div>
+          <div class="derived-stat">
+            <div class="ds-val" id="out-baseline-turns">1,081</div>
+            <div class="ds-label">Baseline Turns/yr</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <!-- ── ROX BOX ── -->
+  <div class="rox-box">
+    <div class="rox-icon">🐾</div>
+    <div>
+      <div class="rox-label">ROX — Return on Experience</div>
+      <div class="rox-title">Make your residents feel something; beyond the NOI math</div>
+      <ul class="rox-bullets">
+        <li>More positive online reviews, happier residents and stronger renewal conversations</li>
+        <li>Stronger leasing velocity and a differentiated amenity stack that stands out in the market</li>
+        <li>Pet-friendly reputation drives higher pet-occupancy and incremental pet fee revenue</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+</div>
+
+<script>
+  const DEFAULTS = {
+    doors: 2500, occ: 94, rent: 1800,
+    ret: 54, turn: 4500, lift: 3
+  };
+
+  function fmt(n, decimals = 0) {
+    return n.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
+  function fmtD(n) {
+    return '$' + fmt(Math.round(Math.abs(n)));
+  }
+
+  function calc() {
+    const doors   = +document.getElementById('inp-doors').value || 2500;
+    const occ     = +document.getElementById('inp-occ').value / 100;
+    const rent    = +document.getElementById('inp-rent').value || 1800;
+    const ret     = +document.getElementById('inp-ret').value / 100;
+    const turn    = +document.getElementById('inp-turn').value || 4500;
+    const lift    = +document.getElementById('inp-lift').value / 100;
+
+    // Derived
+    const occDoors   = doors * occ;
+    const petDoors   = occDoors * 0.40;
+    const baseTurns  = occDoors * (1 - ret);
+    const turnsSaved = occDoors * lift;
+    const turnCostAv = turnsSaved * turn;
+    const totalNOI   = turnCostAv;
+
+    // ── Update labels ──
+    document.getElementById('lbl-doors').textContent = fmt(doors);
+    document.getElementById('lbl-occ').textContent   = fmt(+document.getElementById('inp-occ').value) + '%';
+    document.getElementById('lbl-rent').textContent  = '$' + fmt(rent);
+    document.getElementById('lbl-ret').textContent   = fmt(+document.getElementById('inp-ret').value) + '%';
+    document.getElementById('lbl-turn').textContent  = '$' + fmt(turn);
+
+    const liftDisp = +document.getElementById('inp-lift').value;
+    document.getElementById('lbl-lift').textContent = (liftDisp >= 0 ? '+' : '') + liftDisp.toFixed(1) + ' pts';
+
+    // ── Primary output ──
+    const noiEl = document.getElementById('out-noi');
+    noiEl.textContent = (totalNOI >= 0 ? '' : '−') + fmtD(totalNOI);
+    noiEl.className = 'metric-value ' + (totalNOI >= 0 ? 'green' : 'red');
+
+    document.getElementById('out-noi-sub').textContent =
+      totalNOI >= 0 ? 'vacancy loss + make-ready avoided' : 'net negative at this scenario';
+
+    const turnsRnd = Math.round(Math.abs(turnsSaved));
+    document.getElementById('out-turns').textContent = fmt(turnsRnd);
+    document.getElementById('out-turns-sub').textContent =
+      turnsSaved >= 0 ? 'move-outs prevented' : 'additional move-outs';
+
+    document.getElementById('out-monthly').textContent =
+      (totalNOI >= 0 ? '' : '−') + fmtD(totalNOI / 12);
+
+    // ── Breakdown ──
+    document.getElementById('out-turn-cost').textContent =
+      (turnCostAv >= 0 ? '' : '−') + fmtD(turnCostAv);
+    document.getElementById('out-turn-cost').className =
+      'breakdown-val ' + (turnCostAv >= 0 ? 'green' : 'red');
+
+    // ── Derived stats ──
+    document.getElementById('out-occ-doors').textContent      = fmt(Math.round(occDoors));
+    document.getElementById('out-pet-doors').textContent      = fmt(Math.round(petDoors));
+    document.getElementById('out-baseline-turns').textContent = fmt(Math.round(baseTurns));
+  }
+
+  function resetDefaults() {
+    document.getElementById('inp-doors').value = DEFAULTS.doors;
+    document.getElementById('inp-occ').value   = DEFAULTS.occ;
+    document.getElementById('inp-rent').value  = DEFAULTS.rent;
+    document.getElementById('inp-ret').value   = DEFAULTS.ret;
+    document.getElementById('inp-turn').value  = DEFAULTS.turn;
+    document.getElementById('inp-lift').value  = DEFAULTS.lift;
+    calc();
+  }
+
+  // Wire events
+  ['inp-doors','inp-occ','inp-rent','inp-ret','inp-turn','inp-lift']
+    .forEach(id => {
+      document.getElementById(id).addEventListener('input', calc);
+      document.getElementById(id).addEventListener('change', calc);
+    });
+
+  // Initial render
+  calc();
+</script>
+</body>
+</html>
